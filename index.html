@@ -135,98 +135,43 @@
 
 <img id="cong" src="QR.gif" onclick="CongFlip()">
 
-<script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
-
-<canvas id="congCanvas" style="max-width: 100%; max-height: 105%; margin-top: -422px; opacity: 0; display: block;" onclick="CongFlip()"></canvas>
-
 <script>
-  var canWhitey = true;
-  var state = false;
-  var gifSrc = "QR.gif";
-  var gifReverseSrc = "qrev.gif";
-  var canvas = document.getElementById("congCanvas");
-  var gifPlayer = null;
+        var canWhitey = true;
+        var state = false
 
-  function CongFlip() {
-    if (state) {
-      refreshGif();
-      setTimeout(function() {
-        document.getElementById("congCanvas").style.opacity = 0;
-      }, 160);
-      canWhitey = true;
-      state = false;
-    } else {
-      reverseGif();
-      setTimeout(function() {
-        document.getElementById("congCanvas").style.opacity = 1;
-        playGif();
-      }, 160);
-      canWhitey = false;
-      state = true;
-    }
-  }
+        function CongFlip() {
+            if (state) {
+                reverseGif();
+                setTimeout(function () {
+                    document.getElementById("cong").style.opacity = 0
+                    document.getElementById("cong2").style.opacity = 0
+                }, 160)
+                canWhitey = true;
+                state = false
+            } else {
+                refreshGif();
+                setTimeout(function () {
+                    document.getElementById("cong").style.opacity = 1
+                    document.getElementById("cong2").style.opacity = 0
+                }, 160)
+                canWhitey = false;
+                state = true
+            }
+        }
+    </script>
 
-  function refreshGif() {
-    if (gifPlayer !== null) {
-      gifPlayer.pause();
-      gifPlayer.destroy();
-    }
-    gifPlayer = new GIFPlayer(canvas, gifSrc);
-  }
 
-  function reverseGif() {
-    if (gifPlayer !== null) {
-      gifPlayer.pause();
-      gifPlayer.destroy();
-    }
-    gifPlayer = new GIFPlayer(canvas, gifReverseSrc);
-  }
 
-  function playGif() {
-    if (gifPlayer !== null) {
-      gifPlayer.play();
-    }
-  }
+    <img id="cong" src="QR.gif" style="max-width:100%;max-height:105%;margin-top: -422px;opacity:0;display:block">
+    <script>
+        function refreshGif() {
+            cong.src = "QR.gif" + "?a=" + Math.random();
+        }
 
-  class GIFPlayer {
-    constructor(canvas, src) {
-      this.canvas = canvas;
-      this.gif = new GIF();
-      this.gif.load(src);
-      this.gif.on("finished", this.onFinished.bind(this));
-      this.gif.on("progress", this.onProgress.bind(this));
-      this.isPlaying = false;
-    }
-
-    play() {
-      this.isPlaying = true;
-      this.gif.play();
-    }
-
-    pause() {
-      this.isPlaying = false;
-      this.gif.pause();
-    }
-
-    destroy() {
-      this.pause();
-      this.gif.destroy();
-    }
-
-    onFinished() {
-      this.isPlaying = false;
-    }
-
-    onProgress(frameIndex) {
-      if (this.isPlaying) {
-        const frame = this.gif.frame(frameIndex);
-        const ctx = this.canvas.getContext("2d");
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        ctx.drawImage(frame.image, frame.x, frame.y);
-      }
-    }
-  }
-</script>
+        function reverseGif() {
+            cong.src = "qrev.gif" + "?a=" + Math.random();
+        }
+    </script>
 
 
 
