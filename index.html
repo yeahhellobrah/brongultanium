@@ -135,6 +135,8 @@
 
 <img id="cong" src="QR.gif" onclick="CongFlip()">
 
+<script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
+
 <canvas id="congCanvas" style="max-width: 100%; max-height: 105%; margin-top: -422px; opacity: 0; display: block;" onclick="CongFlip()"></canvas>
 
 <script>
@@ -143,16 +145,7 @@
   var gifSrc = "QR.gif";
   var gifReverseSrc = "qrev.gif";
   var canvas = document.getElementById("congCanvas");
-  var ctx = canvas.getContext("2d");
-  var gifImage = new Image();
-  var gifFrameData;
-
-  gifImage.onload = function() {
-    canvas.width = gifImage.width;
-    canvas.height = gifImage.height;
-    ctx.drawImage(gifImage, 0, 0);
-    gifFrameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  };
+  var gifPlayer = null;
 
   function CongFlip() {
     if (state) {
@@ -166,7 +159,7 @@
       reverseGif();
       setTimeout(function() {
         document.getElementById("congCanvas").style.opacity = 1;
-        animateGif();
+        playGif();
       }, 160);
       canWhitey = false;
       state = true;
@@ -174,19 +167,67 @@
   }
 
   function refreshGif() {
-    gifImage.src = gifSrc + "?a=" + Math.random();
+    if (gifPlayer !== null) {
+      gifPlayer.pause();
+      gifPlayer.destroy();
+    }
+    gifPlayer = new GIFPlayer(canvas, gifSrc);
   }
 
   function reverseGif() {
-    gifImage.src = gifReverseSrc + "?a=" + Math.random();
+    if (gifPlayer !== null) {
+      gifPlayer.pause();
+      gifPlayer.destroy();
+    }
+    gifPlayer = new GIFPlayer(canvas, gifReverseSrc);
   }
 
-  function animateGif() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(gifFrameData, 0, 0);
-    requestAnimationFrame(animateGif);
+  function playGif() {
+    if (gifPlayer !== null) {
+      gifPlayer.play();
+    }
+  }
+
+  class GIFPlayer {
+    constructor(canvas, src) {
+      this.canvas = canvas;
+      this.gif = new GIF();
+      this.gif.load(src);
+      this.gif.on("finished", this.onFinished.bind(this));
+      this.gif.on("progress", this.onProgress.bind(this));
+      this.isPlaying = false;
+    }
+
+    play() {
+      this.isPlaying = true;
+      this.gif.play();
+    }
+
+    pause() {
+      this.isPlaying = false;
+      this.gif.pause();
+    }
+
+    destroy() {
+      this.pause();
+      this.gif.destroy();
+    }
+
+    onFinished() {
+      this.isPlaying = false;
+    }
+
+    onProgress(frameIndex) {
+      if (this.isPlaying) {
+        const frame = this.gif.frame(frameIndex);
+        const ctx = this.canvas.getContext("2d");
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.drawImage(frame.image, frame.x, frame.y);
+      }
+    }
   }
 </script>
+
 
 
 
