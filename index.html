@@ -123,43 +123,50 @@
 
 
 
-    <script>
-        var canWhitey = true;
-        var state = false
+    <style>
+  #cong {
+    max-width: 100%;
+    max-height: 105%;
+    margin-top: -422px;
+    opacity: 0;
+    display: block;
+  }
+</style>
 
-        function CongFlip() {
-            if (state) {
-                reverseGif();
-                setTimeout(function () {
-                    document.getElementById("cong").style.opacity = 0
-                    document.getElementById("cong2").style.opacity = 0
-                }, 160)
-                canWhitey = true;
-                state = false
-            } else {
-                refreshGif();
-                setTimeout(function () {
-                    document.getElementById("cong").style.opacity = 1
-                    document.getElementById("cong2").style.opacity = 0
-                }, 160)
-                canWhitey = false;
-                state = true
-            }
-        }
-    </script>
+<img id="cong" src="QR.gif" onclick="CongFlip()">
 
+<script>
+  var canWhitey = true;
+  var state = false;
+  var gifSrc = "QR.gif";
+  var gifReverseSrc = "qrev.gif";
 
+  function CongFlip() {
+    if (state) {
+      reverseGif();
+      setTimeout(function() {
+        document.getElementById("cong").style.opacity = 0;
+      }, 160);
+      canWhitey = true;
+      state = false;
+    } else {
+      refreshGif();
+      setTimeout(function() {
+        document.getElementById("cong").style.opacity = 1;
+      }, 160);
+      canWhitey = false;
+      state = true;
+    }
+  }
 
-    <img id="cong" src="QR.gif" style="max-width:100%;max-height:105%;margin-top: -422px;opacity:0;display:block">
-    <script>
-        function refreshGif() {
-            cong.src = "QR.gif" + "?a=" + Math.random();
-        }
+  function refreshGif() {
+    document.getElementById("cong").src = gifSrc + "?a=" + Math.random();
+  }
 
-        function reverseGif() {
-            cong.src = "qrev.gif" + "?a=" + Math.random();
-        }
-    </script>
+  function reverseGif() {
+    document.getElementById("cong").src = gifReverseSrc + "?a=" + Math.random();
+  }
+</script>
 
 
 
