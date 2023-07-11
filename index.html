@@ -57,6 +57,19 @@
                 background: #ddd;
                 color: black;
             }
+
+        #animatedImage {
+            max-width: 100%;
+            max-height: 105%;
+            margin-top: -422px;
+            opacity: 0;
+            display: block;
+            transition: all 0.5s ease;
+        }
+
+        #animatedImage.expanded {
+            opacity: 1;
+        }
     </style>
 
     <img src="Truevid.gif" style="width:100%;height:100%">
@@ -121,48 +134,26 @@
         <div id="demo2" style="position:absolute;width: 100%;margin-top:75px;font-size:77%">Time Remaining</div>
     </div>
 
+    <img id="animatedImage" src="animatedImage.png" alt="Animated Image">
 
-<script>
+    <script>
+        var image = document.getElementById('animatedImage');
         var canWhitey = true;
         var state = false
 
         function CongFlip() {
             if (state) {
-                reverseGif();
-                setTimeout(function () {
-                    document.getElementById("cong").style.opacity = 0
-                    document.getElementById("cong2").style.opacity = 0
-                }, 160)
+                image.classList.remove('expanded');
                 canWhitey = true;
                 state = false
             } else {
-                refreshGif();
-                setTimeout(function () {
-                    document.getElementById("cong").style.opacity = 1
-                    document.getElementById("cong2").style.opacity = 0
-                }, 160)
+                image.classList.add('expanded');
                 canWhitey = false;
                 state = true
             }
         }
     </script>
-
-
-
-    <img id="cong" src="QR.gif" style="max-width:100%;max-height:105%;margin-top: -422px;opacity:0;display:block">
-    <script>
-        function refreshGif() {
-            cong.src = "QR.gif" + "?a=" + Math.random();
-        }
-
-        function reverseGif() {
-            cong.src = "qrev.gif" + "?a=" + Math.random();
-        }
-    </script>
-
-
-
-
+    
     <script>
         const interval = setInterval(() => {
             var currentDate = new Date();
