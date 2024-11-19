@@ -104,6 +104,7 @@
             };
             const timeString = now.toLocaleString('en-US', options)
                 .replace(/,/g, '')
+                .replace(' AT', '')  // Add this line to remove "AT"
                 .toUpperCase();
             document.getElementById('time').textContent = timeString;
         }
