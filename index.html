@@ -109,6 +109,14 @@
             z-index: 1000;
             display: none;
         }
+        #overlay, #loading-overlay {
+            transition: opacity 0.3s ease-out;
+            opacity: 0;
+        }
+
+        #overlay.visible, #loading-overlay.visible {
+            opacity: 1;
+        }
     </style>
     <!-- Add this in the head section to preload images -->
     <link rel="preload" as="image" href="black.png">
@@ -257,32 +265,40 @@
         const loadingOverlay = document.getElementById('loading-overlay');
         let isOverlayActive = false;
 
-        // Handle corner trigger click
         cornerTrigger.addEventListener('click', () => {
             overlay.style.display = 'block';
+            // Force reflow
+            overlay.offsetHeight;
+            overlay.classList.add('visible');
             isOverlayActive = true;
         });
 
-        // Handle clicks on the overlay
         overlay.addEventListener('click', (e) => {
             if (isOverlayActive) {
                 const rect = overlay.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
-                // Check if click is in middle area (adjust these values as needed)
-                if (x > 5 && x < 387 && 
-                    y > 203 && y < 332) {
-                    
-                    // Show loading overlay
+                if (x > 5 && x < 387 && y > 203 && y < 332) {
                     loadingOverlay.style.display = 'block';
+                    loadingOverlay.offsetHeight;
+                    loadingOverlay.classList.add('visible');
                     
-                    // Hide loading overlay after 500ms and reset everything
                     setTimeout(() => {
-                        loadingOverlay.style.display = 'none';
-                        overlay.style.display = 'none';
-                        isOverlayActive = false;
-                    }, 1000);
+                        // Start fade out of loading overlay
+                        loadingOverlay.classList.remove('visible');
+                        
+                        setTimeout(() => {
+                            loadingOverlay.style.display = 'none';
+                            // Start fade out of main overlay
+                            overlay.classList.remove('visible');
+                            
+                            setTimeout(() => {
+                                overlay.style.display = 'none';
+                                isOverlayActive = false;
+                            }, 300);
+                        }, 10);
+                    }, 700);
                 }
             }
         });
