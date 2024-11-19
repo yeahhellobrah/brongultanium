@@ -1,158 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone 15 Web App</title>
     <style>
-        .bottom-rectangle {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 1179px; /* 393 * 3 */
-            height: 510px; /* 170 * 3 */
-            background-color: #191919;
+        body {
+            margin: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: flex-start;
+            background-color: #ffffff;
         }
-        .date-text {
-            position: relative;
-            transform: translateY(-45px); /* -15 * 3 */
-            font-family: "Helvetica Neue", sans-serif;
-            color: #FFFFFF;
-            font-size: 90px; /* 30 * 3 */
-            font-weight: bold;
-            text-align: center;
-        }
-        .label-text {
-            position: relative;
-            transform: translateY(105px); /* 35 * 3 */
-            font-family: "Helvetica Neue", sans-serif;
-            color: #FFFFFF;
-            font-size: 60px; /* 20 * 3 */
-            font-weight: bold;
-            text-align: center;
-        }
-        .middle-rectangle {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 1179px; /* 393 * 3 */
-            height: 1181px; /* 394 * 3 */
-            background: linear-gradient(
-                to bottom,
-                #48CBDC 0%,
-                #48CBDC 50%,
-                #1ABED4 50%,
-                #1ABED4 100%
-            );
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .middle-text {
-            font-family: "Helvetica Neue", sans-serif;
-            color: black;
-            font-size: 120px;
-            font-weight: bold;
-            z-index: 1;
-        }
-        .top-rectangle {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .main-image {
             width: 1179px;
-            height: 469px; /* 469/3 */
-            background: linear-gradient(
-                to bottom,
-                #48CBDC 0%,
-                #48CBDC 50%,
-                #1ABED4 50%,
-                #1ABED4 100%
-            );
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 1870px;
+            background: url('black.png') no-repeat center center;
+            background-size: cover;
         }
-        
-        .top-text {
-            font-family: "Helvetica Neue", sans-serif;
-            color: black;
-            font-size: 150px;
-            font-weight: bold;
-            z-index: 1;
-        }
-        .header-rectangle {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
+        .rectangle {
             width: 1179px;
-            height: 176px;
+            height: 510px;
             background-color: #191919;
-            border-radius: 45px 45px 0 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .header-text {
-            font-family: "Helvetica Neue", sans-serif;
-            color: #FFFFFF;
-            font-size: 60px;
-            font-weight: bold;
-        }
-
-        .back-text {
-            position: absolute;
-            left: 60px;
-            font-family: "Helvetica Neue", sans-serif;
-            color: #FFFFFF;
-            font-size: 60px;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="bottom-rectangle">
-        <div id="dateDisplay" class="date-text"></div>
-        <div class="label-text">Current Time</div>
-    </div>
-
-    <div class="middle-rectangle">
-        <div class="middle-text">ADULT</div>
-    </div>
-
-    <div class="top-rectangle">
-        <div class="top-text">YRT</div>
-    </div>
-
-    <div class="header-rectangle">
-        <div class="back-text">Back</div>
-        <div class="header-text">Ticket</div>
-    </div>
-
-    <script>
-        function updateDate() {
-            const now = new Date();
-            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-            const day = now.getDate();
-            const month = months[now.getMonth()];
-            const year = now.getFullYear();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const formattedHours = hours % 12 || 12;
-            const formattedMinutes = minutes.toString().padStart(2, '0');
-            
-            document.getElementById('dateDisplay').textContent = 
-                `${day} ${month} ${year} ${formattedHours}:${formattedMinutes} ${ampm}`;
-        }
-
-        updateDate();
-        setInterval(updateDate, 1000);
-    </script>
+    <div class="main-image"></div>
+    <div class="rectangle"></div>
 </body>
 </html>
