@@ -157,7 +157,7 @@
             };
             const timeString = now.toLocaleString('en-US', options)
                 .replace(/,/g, '')
-                .replace(' AT', '')  // Add this line to remove "AT"
+                .replace(/\s+at\s+/i, ' ')  // Case-insensitive replacement with single space
                 .toUpperCase();
             document.getElementById('time').textContent = timeString;
         }
