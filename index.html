@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>iPhone 15 Web App</title>
     <style>
         body {
@@ -23,11 +23,196 @@
             width: 393px;
             height: 170px;
             background-color: #191919;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .time {
+            color: #FFFFFF;
+            font-family: "Helvetica Neue", sans-serif;
+            font-weight: bold;
+            font-size: 30px;
+            margin-bottom: 50px;
+        }
+        .label {
+            color: #FFFFFF;
+            font-family: "Helvetica Neue", sans-serif;
+            font-weight: bold;
+            font-size: 20px;
+            position: absolute;
+            bottom: 20px;
+        }
+        /* Add this CSS to your existing styles */
+        * {
+            -webkit-user-select: none;    /* Safari */
+            -moz-user-select: none;       /* Firefox */
+            -ms-user-select: none;        /* IE10+/Edge */
+            user-select: none;            /* Standard */
+        }
+        /* Add these styles */
+        .qr-overlay {
+            position: absolute;
+            width: 393px;
+            height: 398px;
+            bottom: 290px;
+            z-index: 2;
+            pointer-events: none;
+            transform-origin: bottom right;
+            transition: all 0.3s ease-out;
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .qr-overlay img {
+            width: 393px;
+            height: 398px;
+            object-fit: cover;
+        }
+
+        .qr-overlay.expanded {
+            transform: scale(1);
+            opacity: 1;
         }
     </style>
+    <!-- Add this in the head section to preload images -->
+    <link rel="preload" as="image" href="black.png">
+    <link rel="preload" as="image" href="white.PNG">
 </head>
 <body>
-    <div class="main-image"></div>
-    <div class="rectangle"></div>
+    <div class="main-image" onclick="handleClick(event)"></div>
+    <div class="qr-overlay" style="display: none;">
+        <img src="qr.png" alt="QR Code">
+    </div>
+    <div class="rectangle">
+        <div id="time" class="time"></div>
+        <div class="label">Current Time</div>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            };
+            const timeString = now.toLocaleString('en-US', options)
+                .replace(/,/g, '')
+                .toUpperCase();
+            document.getElementById('time').textContent = timeString;
+        }
+        
+        let isCountdown = false;
+        let countdownTime = null;
+        let currentInterval = null; // Single interval tracker
+
+        // Generate random countdown time between 5 mins and 2 hours (in milliseconds)
+        const generateRandomTime = () => {
+            const minTime = 5 * 60 * 1000; // 5 minutes
+            const maxTime = 2 * 60 * 60 * 1000; // 2 hours
+            return Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+        };
+
+        function formatCountdown(ms) {
+            const hours = Math.floor(ms / (60 * 60 * 1000));
+            const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((ms % (60 * 1000)) / 1000);
+
+            let timeString = '';
+            if (hours > 0) timeString += `${hours} hr `;
+            if (minutes > 0 || hours > 0) timeString += `${minutes} mins `;
+            timeString += `${seconds} secs.`;
+
+            return timeString;
+        }
+
+        function updateDisplay() {
+            const timeElement = document.getElementById('time');
+            const labelElement = document.querySelector('.label');
+            const rectangleElement = document.querySelector('.rectangle');
+
+            if (isCountdown) {
+                const remaining = countdownTime - Date.now();
+                if (remaining <= 0) {
+                    toggleMode();
+                    return;
+                }
+                timeElement.textContent = formatCountdown(remaining);
+                labelElement.textContent = 'Time Remaining';
+                rectangleElement.style.backgroundColor = '#414042';
+            } else {
+                updateTime(); // Original time display function
+                labelElement.textContent = 'Current Time';
+                rectangleElement.style.backgroundColor = '#231F20';
+            }
+        }
+
+        function toggleMode() {
+            // Clear existing interval
+            if (currentInterval) {
+                clearInterval(currentInterval);
+                currentInterval = null;
+            }
+
+            isCountdown = !isCountdown;
+            
+            if (isCountdown) {
+                if (!countdownTime) {
+                    countdownTime = Date.now() + generateRandomTime();
+                }
+                currentInterval = setInterval(updateDisplay, 1000);
+            } else {
+                currentInterval = setInterval(updateTime, 1000);
+            }
+            
+            // Immediate update
+            updateDisplay();
+        }
+
+        // Add click handler to rectangle
+        document.querySelector('.rectangle').addEventListener('click', toggleMode);
+
+        // Initial setup
+        currentInterval = setInterval(updateTime, 1000);
+    </script>
+    <script>
+        let isBlackImage = true;
+        let isQRVisible = false;
+
+        function handleClick(event) {
+            const rect = event.target.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            // Check if click is in bottom left corner (let's say 100x100 area)
+            if (x >= 338 && x <= 392 && y >= 567 && y <= 621) {
+                const qrOverlay = document.querySelector('.qr-overlay');
+                isQRVisible = !isQRVisible;
+                if (isQRVisible) {
+                    qrOverlay.style.display = 'block';
+                    setTimeout(() => {
+                        qrOverlay.classList.add('expanded');
+                    }, 10);
+                } else {
+                    qrOverlay.classList.remove('expanded');
+                    setTimeout(() => {
+                        qrOverlay.style.display = 'none';
+                    }, 300);
+                }
+            }
+
+            // Check if click is within main image area
+            else if (x >= 0 && x <= 393 && y >= 224 && y <= 680) {
+                const mainImage = document.querySelector('.main-image');
+                isBlackImage = !isBlackImage;
+                mainImage.style.backgroundImage = isBlackImage ? 'url("black.png")' : 'url("white.PNG")';
+            }
+        }
+    </script>
 </body>
 </html>
