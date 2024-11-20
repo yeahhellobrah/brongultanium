@@ -163,7 +163,7 @@
     </style>
     <!-- Add this in the head section to preload images -->
     <link rel="preload" as="image" href="black.png">
-    <link rel="preload" as="image" href="white.PNG">
+    <link rel="preload" as="image" href="white.png">
 </head>
 <body>
     <!-- Add this HTML right after <body> tag -->
@@ -315,7 +315,7 @@
             else if (x >= 0 && x <= 393 && y >= 224 && y <= 680) {
                 const mainImage = document.querySelector('.main-image');
                 isBlackImage = !isBlackImage;
-                mainImage.style.backgroundImage = isBlackImage ? 'url("black.png")' : 'url("white.PNG")';
+                mainImage.style.backgroundImage = isBlackImage ? 'url("black.png")' : 'url("white.png")';
             }
         }
     </script>
