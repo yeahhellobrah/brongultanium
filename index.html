@@ -67,7 +67,7 @@
             width: 393px;
             height: 398px;
             bottom: 170px;
-            z-index: 2;
+            z-index: 3;
             pointer-events: none;
             transform-origin: bottom right;
             transition: all 0.3s ease-out;
@@ -126,12 +126,63 @@
         #overlay.visible, #loading-overlay.visible {
             opacity: 1;
         }
+        /* Add this CSS in the <style> section */
+        .logo-ticker {
+            position: fixed;
+            top: 400px;
+            left: 0;
+            width: 100%;
+            height: 51px;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none; /* Add this line */
+        }
+
+        .logo-container {
+            display: flex;
+            position: absolute;
+            animation: tickerMove 16s linear infinite;
+        }
+
+        .logo {
+            width: 103px;
+            height: 51px;
+            margin-right: 100px;
+            background: url('logo.png') no-repeat;
+            background-size: contain;
+        }
+
+        @keyframes tickerMove {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-203px * 6)); /* -(width + margin) * number of logos */
+            }
+        }
     </style>
     <!-- Add this in the head section to preload images -->
     <link rel="preload" as="image" href="black.png">
     <link rel="preload" as="image" href="white.PNG">
 </head>
 <body>
+    <!-- Add this HTML right after <body> tag -->
+    <div class="logo-ticker">
+        <div class="logo-container">
+            <!-- First set -->
+            <div class="logo"></div>
+            <div class="logo"></div>
+            <div class="logo"></div>
+            <!-- Duplicate set for seamless loop -->
+            <div class="logo"></div>
+            <div class="logo"></div>
+            <div class="logo"></div>
+            <!-- Extra set for safety -->
+            <div class="logo"></div>
+            <div class="logo"></div>
+            <div class="logo"></div>
+        </div>
+    </div>
     <div id="corner-trigger"></div>
     <div id="overlay"></div>
     <div id="loading-overlay"></div>
