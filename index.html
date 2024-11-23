@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>iPhone 15 Web App</title>
     <style>
+        @import url('https://fonts.cdnfonts.com/css/helvetica-neue-5');
         html, body {
             position: fixed;
             width: 100%;
@@ -43,6 +44,7 @@
             color: #FFFFFF;
             font-family: "Helvetica Neue", sans-serif;
             font-weight: bold;
+            font-weight: 500;
             font-size: 30px;
             margin-bottom: 50px;
         }
@@ -50,6 +52,7 @@
             color: #FFFFFF;
             font-family: "Helvetica Neue", sans-serif;
             font-weight: bold;
+            font-weight: 500;
             font-size: 20px;
             position: absolute;
             bottom: 20px;
@@ -160,6 +163,83 @@
                 transform: translateX(calc(-203px * 6)); /* -(width + margin) * number of logos */
             }
         }
+        .sin-container {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-328px);
+            width: 100%;
+            height: 157px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sin-image {
+            position: absolute;
+            width: 418px;
+            height: 157px;
+            left: 0;
+            transform: translateX(50vw);
+            opacity: 1;
+        }
+
+        @keyframes accelerate {
+            0% {
+                transform: translateX(50vw);
+                animation-timing-function: ease-in; /* starts slow, ends fast */
+            }
+            100% {
+                transform: translateX(100vw);
+            }
+        }
+
+        @keyframes decelerate {
+            0% {
+                transform: translateX(-418px);
+                animation-timing-function: ease-out; /* starts fast, ends slow */
+            }
+            100% {
+                transform: translateX(50vw);
+            }
+        }
+
+        .accelerating {
+            animation: accelerate 2s forwards;
+        }
+
+        .decelerating {
+            animation: decelerate 3.5s forwards;
+        }
+        
+        .yrt-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -278px);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: #191919;
+            z-index: 2;
+            font-size: 53px; /* Adjust size as needed */
+            font-weight: bold;
+        }
+        
+        .ranikis-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-95px, -126px);
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #000000;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .ranikis-text.visible {
+            opacity: 1;
+        }
     </style>
     <!-- Add this in the head section to preload images -->
     <link rel="preload" as="image" href="black.png">
@@ -183,6 +263,7 @@
             <div class="logo"></div>
         </div>
     </div>
+    <div class="yrt-text">YRT</div>
     <div id="corner-trigger"></div>
     <div id="overlay"></div>
     <div id="loading-overlay"></div>
@@ -194,22 +275,25 @@
         <div id="time" class="time"></div>
         <div class="label">Current Time</div>
     </div>
+    <!-- Add this after your existing elements -->
+    <div class="sin-container">
+        <img src="sin.png" alt="Sin" class="sin-image">
+    </div>
+    <div id="ranikis" class="ranikis-text">ranikis</div>
 
     <script>
         function updateTime() {
             const now = new Date();
-            const options = {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
+            const day = now.getDate();
+            const month = now.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+            const year = now.getFullYear();
+            const time = now.toLocaleString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
                 hour12: true
-            };
-            const timeString = now.toLocaleString('en-US', options)
-                .replace(/,/g, '')
-                .replace(/\s+at\s+/i, ' ')  // Case-insensitive replacement with single space
-                .toUpperCase();
+            }).toUpperCase();
+            
+            const timeString = `${day} ${month} ${year} ${time}`;
             document.getElementById('time').textContent = timeString;
         }
         
@@ -258,8 +342,8 @@
             }
         }
 
+        // Modify the toggleMode function:
         function toggleMode() {
-            // Clear existing interval
             if (currentInterval) {
                 clearInterval(currentInterval);
                 currentInterval = null;
@@ -270,13 +354,25 @@
             if (isCountdown) {
                 if (!countdownTime) {
                     countdownTime = Date.now() + generateRandomTime();
+                    // Format and set the expiration date text
+                    const expiryDate = new Date(countdownTime);
+                    const day = expiryDate.getDate();
+                    const month = expiryDate.toLocaleString('en-US', { month: 'short' });
+                    const year = expiryDate.getFullYear();
+                    const time = expiryDate.toLocaleString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    
+                    const formattedExpiry = `Expiration : ${day} ${month} ${year} ${time}`;
+                    document.getElementById('ranikis').textContent = formattedExpiry;
                 }
                 currentInterval = setInterval(updateDisplay, 1000);
             } else {
                 currentInterval = setInterval(updateTime, 1000);
             }
             
-            // Immediate update
             updateDisplay();
         }
 
@@ -327,9 +423,11 @@
 
         cornerTrigger.addEventListener('click', () => {
             overlay.style.display = 'block';
+            const ranikisText = document.getElementById('ranikis');
             // Force reflow
             overlay.offsetHeight;
             overlay.classList.add('visible');
+            ranikisText.classList.add('visible');
             isOverlayActive = true;
         });
 
@@ -338,6 +436,7 @@
                 const rect = overlay.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
+                const ranikisText = document.getElementById('ranikis');
                 
                 if (x > 5 && x < 387 && y > 203 && y < 332) {
                     loadingOverlay.style.display = 'block';
@@ -345,12 +444,11 @@
                     loadingOverlay.classList.add('visible');
                     
                     setTimeout(() => {
-                        // Start fade out of loading overlay
                         loadingOverlay.classList.remove('visible');
+                        ranikisText.classList.remove('visible');
                         
                         setTimeout(() => {
                             loadingOverlay.style.display = 'none';
-                            // Start fade out of main overlay
                             overlay.classList.remove('visible');
                             
                             setTimeout(() => {
@@ -362,6 +460,35 @@
                 }
             }
         });
+    </script>
+    <script>
+        // Add this to your existing scripts
+        function animateSin() {
+            const sinImage = document.querySelector('.sin-image');
+            
+            async function runAnimation() {
+                // Wait at start position
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Accelerate out
+                sinImage.classList.add('accelerating');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                sinImage.classList.remove('accelerating');
+                
+                // Reset position and decelerate in
+                sinImage.classList.add('decelerating');
+                await new Promise(resolve => setTimeout(resolve, 3500));
+                sinImage.classList.remove('decelerating');
+                
+                // Run animation again
+                runAnimation();
+            }
+            
+            runAnimation();
+        }
+
+        // Start the animation when page loads
+        document.addEventListener('DOMContentLoaded', animateSin);
     </script>
 </body>
 </html>
